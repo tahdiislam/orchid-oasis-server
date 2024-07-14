@@ -33,7 +33,7 @@ class UserRegistrationAPIView(APIView):
             print('token: ', token, 'uid :', uid)
             full_name = f'{user.first_name} {user.last_name}'
             confirm_url = f'http://localhost:8000/customer/confirm/{uid}/{token}/'
-            email_subject = 'Confirm your account'
+            email_subject = 'Confirm Your Account'
             email_body = render_to_string('customers/confirm_account_mail.html', {'confirm_url': confirm_url, 'full_name': full_name})
             email = EmailMultiAlternatives(email_subject, '', to=[user.email])
             email.attach_alternative(email_body, 'text/html')

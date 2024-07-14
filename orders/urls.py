@@ -8,4 +8,5 @@ router.register('list', views.OrderViewSet)
 
 urlpatterns = [
     path('', include(router.urls), name='orders'),
+    path('create/', views.OrderCreateAPIView.as_view(), name='create'),
 ]
