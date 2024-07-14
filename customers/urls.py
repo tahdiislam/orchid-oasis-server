@@ -8,7 +8,7 @@ router.register('list', views.CustomerViewSet)
 
 
 urlpatterns = [
-    path('', include(router.urls)),
+    path('', include(router.urls), name='customers'),
     path('register/', views.UserRegistrationAPIView.as_view(), name='register'),
     path('confirm/<uid64>/<token>/', views.activate, name='activate'),
     path('login/', views.UserLoginAPIView.as_view(), name='login'),
