@@ -31,8 +31,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
-CSRF_TRUSTED_ORIGINS = ['https://orchid-oasis.onrender.com/', 'http://127.0.0.1:8000/']
-
+CSRF_TRUSTED_ORIGINS = ['https://orchid-oasis.onrender.com', 'http://localhost:3000']
 
 # Application definition
 
