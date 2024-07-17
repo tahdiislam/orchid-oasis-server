@@ -32,7 +32,7 @@ class UserRegistrationAPIView(APIView):
             uid = urlsafe_base64_encode(force_bytes(user.pk))
             print('token: ', token, 'uid :', uid)
             full_name = f'{user.first_name} {user.last_name}'
-            confirm_url = f'http://localhost:8000/customer/confirm/{uid}/{token}/'
+            confirm_url = f'https://orchid-oasis.onrender.com/customer/confirm/{uid}/{token}/'
             email_subject = 'Confirm Your Account'
             email_body = render_to_string('customers/confirm_account_mail.html', {'confirm_url': confirm_url, 'full_name': full_name})
             email = EmailMultiAlternatives(email_subject, '', to=[user.email])
@@ -52,7 +52,7 @@ def activate(request, uid64, token):
         user.is_active = True
         user.save()
         print("🐍 File: customers/views.py | Line: 52 | activate ~ user",user)
-        return redirect('register')
+        return redirect('http://localhost:3000/login')
     else:
         return Response('register')
 
