@@ -20,6 +20,13 @@ class CustomerViewSet(viewsets.ModelViewSet):
     queryset = Customer.objects.all()
     serializer_class = CustomerSerializer
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        user_id = self.request.query_params.get('user_id')
+        if user_id is not None:
+            queryset = queryset.filter(user_id=user_id)
+        return queryset
+
 class UserRegistrationAPIView(APIView):
     serializer_class = RegistrationSerializer
 
@@ -41,7 +48,6 @@ class UserRegistrationAPIView(APIView):
             return Response({'success': 'We have sent you a link to confirm your account. Please check your email'}, status=200)
 
 def activate(request, uid64, token):
-    print("🐍 File: customers/views.py | hit  activate ")
     try:
         uid = urlsafe_base64_decode(uid64).decode()
         user = User._default_manager.get(pk=uid)
@@ -51,7 +57,7 @@ def activate(request, uid64, token):
     if user is not None and default_token_generator.check_token(user, token):
         user.is_active = True
         user.save()
-        print("🐍 File: customers/views.py | Line: 52 | activate ~ user",user)
+        Customer(user=user).save()
         return redirect('http://localhost:3000/login')
     else:
         return Response('register')

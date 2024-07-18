@@ -2,8 +2,15 @@ from rest_framework import serializers
 from .models import Customer
 from django.contrib.auth.models import User
 
+# Step 1: Create a User Serializer
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'email', 'first_name', 'last_name']
+
 class CustomerSerializer(serializers.ModelSerializer):
     # user = serializers.StringRelatedField(many=False)
+    user = UserSerializer(read_only=True)
     class Meta:
         model = Customer
         fields = '__all__'
@@ -36,6 +43,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
         user.set_password(password)
         user.is_active = False
         user.save()
+        # Customer(user=user).save()
         return user
     
 class LoginSerializer(serializers.Serializer):
