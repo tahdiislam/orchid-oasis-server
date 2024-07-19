@@ -11,7 +11,7 @@ ORDER_STATUS = (
 class Order(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.DO_NOTHING)
     flower = models.ForeignKey(Flower, on_delete=models.DO_NOTHING)
-    status = models.CharField(max_length=10, choices=ORDER_STATUS,)
+    status = models.CharField(max_length=10, choices=ORDER_STATUS, default='Completed')
     quantity = models.IntegerField()
     total_price = models.FloatField()
     created_at = models.DateTimeField(auto_now_add=True)

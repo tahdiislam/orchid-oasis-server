@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .serializers import OrderSerializer
+from .serializers import OrderSerializer, OrderCreateSerializer
 from .models import Order
 from flowers.models import Flower
 from rest_framework import viewsets
@@ -23,7 +23,7 @@ class OrderViewSet(viewsets.ReadOnlyModelViewSet):
         return queryset
     
 class OrderCreateAPIView(APIView):
-    serializer_class = OrderSerializer
+    serializer_class = OrderCreateSerializer
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
     
