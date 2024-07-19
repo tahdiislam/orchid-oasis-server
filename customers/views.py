@@ -73,7 +73,10 @@ class UserLoginAPIView(APIView):
             if user is not None:
                 token, _ = Token.objects.get_or_create(user=user)
                 login(request, user)
-                return Response({'token': token.key, 'user_id': user.pk}, status=200)
+                if user.is_staff:
+                    return Response({'token': token.key, 'user_id': user.pk, 'admin': True}, status=200)
+                else:
+                    return Response({'token': token.key, 'user_id': user.pk}, status=200)
 
         return Response({'error': 'Invalid credentials'}, status=400)
 

@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .serializers import OrderSerializer
 from .models import Order
 from flowers.models import Flower
@@ -39,3 +39,33 @@ class OrderCreateAPIView(APIView):
             email.attach_alternative(email_body, 'text/html')
             email.send()
             return Response({'success': 'Order confirmed'}, status=200)
+
+def ChangeOrderStatus(request, order_id):
+    print("🐍 File: orders/views.py | Line: 44 | undefined ~ order_id",order_id)
+    try:
+        order = get_object_or_404(Order, pk=order_id)
+    except(TypeError, ValueError, OverflowError, Order.DoesNotExist):
+        order = None
+
+    if order is not None:
+        order.status = 'Completed'
+        order.save()
+        return redirect(f'http://localhost:3000/admin')
+    else:
+        return redirect(f'http://localhost:3000/admin')
+    
+""" 
+class ChangeOrderStatusAPIView(APIView):
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        order_id = self.request.query_params.get('order_id')
+        order = get_object_or_404(Order, pk=order_id)
+        if order:
+            order.status = 'Completed'
+            order.save()
+        return queryset
+    
+    def get(self, request):
+        print("🐍 File: orders/views.py | Line: 54 | get_queryset ~ self",self.request.body)
+        return Response({'message': 'Order status has been changed'}, status=200)
+"""
