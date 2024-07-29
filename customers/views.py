@@ -82,6 +82,9 @@ class UserLoginAPIView(APIView):
 
 class UserLogoutAPIView(APIView):
     def get(self, request):
-        request.user.auth_token.delete()
-        logout(request)
-        return Response({'message': 'Successfully logged out'}, status=200)
+        try:
+            request.user.auth_token.delete()
+            logout(request)
+            return Response({'message': 'Successfully logged out'}, status=200)
+        except Exception as e:
+            return Response({'error': str(e)}, status=500)
