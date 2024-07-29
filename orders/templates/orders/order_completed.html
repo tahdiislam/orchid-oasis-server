@@ -1,25 +1,18 @@
 <div>
     <p>Dear {{ customer_name }}!</p>
     <p>
-        Thank you for your recent order with Orchid Oasis (Order # [{{ order.id }}]). We appreciate your business and
-        are excited to get your order processed and shipped to you.
+        Your recent order (Order # [{{ order.id }}]) has been completed. You will receive your product in 3 business days.
     </p>
     <h4>
         Order Details:
     </h4>
     <ul>
         <li>Items Ordered: {{ order.flower.title }}</li>
+        <li>Status: {{ order.status }}</li>
         <li>Quantity: {{ order.quantity }}</li>
         <li>Total Price: {{ order.total_price }}</li>
         <li>Estimated Delivery: Within 3 business days</li>
     </ul>
-    <h4>
-        Download Your Order Receipt:
-    </h4>
-    <p>
-        For your records, you can download a copy of your order receipt by clicking the button below:
-    </p>
-    <a href="#">Download Order Receipt</a>
     <p>
         Thank you for choosing Orchid Oasis. We look forward to fulfilling your order and serving you again in
         the future.
