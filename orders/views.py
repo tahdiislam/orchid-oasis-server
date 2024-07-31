@@ -9,9 +9,23 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAdminUser
 from rest_framework.authentication import TokenAuthentication
+from django.http import HttpResponseRedirect
+from sslcommerz_lib import SSLCOMMERZ
+import random
+import string
+from customers.models import Customer
+import environ
+from django.urls import reverse
 # for mail sending
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
+
+env = environ.Env()
+environ.Env.read_env()
+
+# generate unique id
+def unique_transaction_id_generator(size=10, chars=string.ascii_uppercase + string.digits):
+    return ''.join(random.choice(chars) for _ in range(size))
 
 # Create your views here.
 class OrderViewSet(viewsets.ReadOnlyModelViewSet):
@@ -33,16 +47,71 @@ class OrderCreateAPIView(APIView):
         if serializer.is_valid():
             order = serializer.save()
             flower = get_object_or_404(Flower, pk=order.flower_id)
-            flower.available -= order.quantity
-            flower.save(update_fields=['available'])
             full_name = f'{order.customer.user.first_name} {order.customer.user.last_name}'
-            email_subject = f'Your Order Confirmation - Orchid Oasis (#[{order.id}])'
-            email_body = render_to_string('orders/order_confirmation.html', {'customer_name': full_name, 'order': order})
-            email = EmailMultiAlternatives(email_subject, '', to=[order.customer.user.email])
-            email.attach_alternative(email_body, 'text/html')
-            email.send()
-            return Response({'success': 'Order confirmed'}, status=200)
-        return redirect(f'http://localhost:3000/admin')
+            transaction_id = unique_transaction_id_generator()
+            order.transaction_id = transaction_id
+            order.save()
+            store_id = env('STORE_ID')
+            store_pass = env('STORE_PASS')
+            settings = { 'store_id': store_id, 'store_pass': store_pass, 'issandbox': True }
+            sslcz = SSLCOMMERZ(settings)
+            post_body = {
+                'total_amount': order.total_price,
+                'currency': "BDT",
+                'tran_id': transaction_id,
+                'success_url': f"http://127.0.0.1:8000/order/success/{order.id}",
+                'fail_url': f"http://127.0.0.1:8000/order/fail/{order.id}",
+                'cancel_url': f"http://127.0.0.1:8000/order/fail/{order.id}",
+                'emi_option': 0,
+                'cus_name': full_name,
+                'cus_email': order.customer.user.email,
+                'cus_phone': "01700000000",
+                'cus_add1': "Lakshmipur",
+                'cus_city': "Dhaka",
+                'cus_country': "Bangladesh",
+                'shipping_method': "NO",
+                'multi_card_name': "",
+                'num_of_item': 1,
+                'product_name': flower.title,
+                'product_category': "Flower",
+                'product_profile': "general"
+            }
+
+            response = sslcz.createSession(post_body) # API response
+            print('SSL commerce',response)
+            # Need to redirect user to response['GatewayPageURL']
+            return HttpResponseRedirect(response['GatewayPageURL'])
+        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class OrderConfirmationAPIView(APIView):
+    def post(self, request, order_id):
+        try:
+            order =  get_object_or_404(Order, pk=order_id)
+            flower = get_object_or_404(Flower, pk=order.flower_id)
+        except(TypeError, ValueError, OverflowError, Order.DoesNotExist or Flower.DoesNotExist):
+            return Response({'error': 'Order not found or invalid order id'}, status=status.HTTP_404_NOT_FOUND)
+        order.payment_status = True
+        order.save(update_fields=['payment_status'])
+        flower.available -= order.quantity
+        flower.save(update_fields=['available'])
+        full_name = f'{order.customer.user.first_name} {order.customer.user.last_name}'
+        email_subject = f'Your Order Confirmation - Orchid Oasis (#[{order.id}])'
+        email_body = render_to_string('orders/order_confirmation.html', {'customer_name': full_name, 'order': order})
+        email = EmailMultiAlternatives(email_subject, '', to=[order.customer.user.email])
+        email.attach_alternative(email_body, 'text/html')
+        email.send()
+        return HttpResponseRedirect('http://127.0.0.1:8000/success')
+
+class OrderCancelAPIView(APIView):
+    def post(self, request, order_id):
+        try:
+            order =  get_object_or_404(Order, pk=order_id)
+        except(TypeError, ValueError, OverflowError, Order.DoesNotExist):
+            return Response({'error': 'Order not found or invalid order id'}, status=status.HTTP_404_NOT_FOUND)
+        order.status = 'Cancelled'
+        order.save()
+        return HttpResponseRedirect('http://127.0.0.1:8000/fail')
     
 class ChangeOrderStatusAPIView(APIView):
     authentication_classes = [TokenAuthentication]

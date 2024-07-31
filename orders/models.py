@@ -11,11 +11,11 @@ ORDER_STATUS = (
 class Order(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.DO_NOTHING)
     flower = models.ForeignKey(Flower, on_delete=models.DO_NOTHING)
-    status = models.CharField(max_length=10, choices=ORDER_STATUS, default='Completed')
+    status = models.CharField(max_length=10, choices=ORDER_STATUS, default='Pending')
     quantity = models.IntegerField()
     total_price = models.FloatField()
     created_at = models.DateTimeField(auto_now_add=True)
-    ordered = models.BooleanField(default=False, blank=True)
+    payment_status = models.BooleanField(default=False, blank=True)
     transaction_id = models.CharField(max_length=100, null=True, blank=True)
 
     def __str__(self):
