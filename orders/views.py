@@ -80,7 +80,7 @@ class OrderCreateAPIView(APIView):
             response = sslcz.createSession(post_body) # API response
             print('SSL commerce',response)
             # Need to redirect user to response['GatewayPageURL']
-            return HttpResponseRedirect(response['GatewayPageURL'])
+            return Response({'redirect_url': response['GatewayPageURL']}, status=status.HTTP_200_OK)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -101,7 +101,7 @@ class OrderConfirmationAPIView(APIView):
         email = EmailMultiAlternatives(email_subject, '', to=[order.customer.user.email])
         email.attach_alternative(email_body, 'text/html')
         email.send()
-        return HttpResponseRedirect('http://127.0.0.1:8000/success')
+        return HttpResponseRedirect('http://127.0.0.1:3000/profile')
 
 class OrderCancelAPIView(APIView):
     def post(self, request, order_id):
@@ -111,7 +111,7 @@ class OrderCancelAPIView(APIView):
             return Response({'error': 'Order not found or invalid order id'}, status=status.HTTP_404_NOT_FOUND)
         order.status = 'Cancelled'
         order.save()
-        return HttpResponseRedirect('http://127.0.0.1:8000/fail')
+        return HttpResponseRedirect('http://127.0.0.1:3000/profile')
     
 class ChangeOrderStatusAPIView(APIView):
     authentication_classes = [TokenAuthentication]
