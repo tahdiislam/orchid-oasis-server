@@ -1,4 +1,3 @@
-from django.shortcuts import render, redirect
 from .serializers import OrderSerializer, OrderCreateSerializer
 from .models import Order
 from flowers.models import Flower
@@ -29,7 +28,7 @@ def unique_transaction_id_generator(size=10, chars=string.ascii_uppercase + stri
 
 # Create your views here.
 class OrderViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Order.objects.all()
+    queryset = Order.objects.all().order_by('-created_at')
     serializer_class = OrderSerializer
 
     def get_queryset(self):
