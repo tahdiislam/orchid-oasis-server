@@ -1,4 +1,6 @@
 asgiref
+certifi
+charset-normalizer
 crispy-bootstrap5
 Django
 django-cors-headers
@@ -8,8 +10,12 @@ django-filter
 django-humanize
 djangorestframework
 humanize
+idna
 Markdown
 pillow
 psycopg2
+requests
 sqlparse
+sslcommerz-lib
 tzdata
+urllib3
