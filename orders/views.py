@@ -100,7 +100,7 @@ class OrderConfirmationAPIView(APIView):
         email = EmailMultiAlternatives(email_subject, '', to=[order.customer.user.email])
         email.attach_alternative(email_body, 'text/html')
         email.send()
-        return HttpResponseRedirect(f'{env('ClIENT_URL')}/order/{order_id}')
+        return HttpResponseRedirect(f"{env('ClIENT_URL')}/order/{order_id}")
 
 class OrderCancelAPIView(APIView):
     def post(self, request, order_id):
@@ -110,7 +110,7 @@ class OrderCancelAPIView(APIView):
             return Response({'error': 'Order not found or invalid order id'}, status=status.HTTP_404_NOT_FOUND)
         order.status = 'Cancelled'
         order.save()
-        return HttpResponseRedirect(f'{env('ClIENT_URL')}/order/{order_id}')
+        return HttpResponseRedirect(f"{env('ClIENT_URL')}/order/{order_id}")
     
 class ChangeOrderStatusAPIView(APIView):
     authentication_classes = [TokenAuthentication]

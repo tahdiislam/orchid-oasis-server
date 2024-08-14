@@ -55,14 +55,13 @@ def activate(request, uid64, token):
     try:
         uid = urlsafe_base64_decode(uid64).decode()
         user = User._default_manager.get(pk=uid)
-        print("🐍 File: customers/views.py | Line: 48 | activate ~ user",user)
     except(TypeError, ValueError, OverflowError, User.DoesNotExist):
         user = None
     if user is not None and default_token_generator.check_token(user, token):
         user.is_active = True
         user.save()
         Customer(user=user).save()
-        return redirect(f'{env("ClIENT_URL")}/login')
+        return redirect(f"{env("ClIENT_URL")}/login")
     else:
         return Response('register')
 
