@@ -11,9 +11,13 @@ from rest_framework.response import Response
 from django.shortcuts import redirect
 from django.contrib.auth import authenticate, login, logout
 from rest_framework.authtoken.models import Token
+import environ
 # for mail sending
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
+
+env = environ.Env()
+environ.Env.read_env()
 
 # Create your views here.
 class CustomerViewSet(viewsets.ModelViewSet):
@@ -58,7 +62,7 @@ def activate(request, uid64, token):
         user.is_active = True
         user.save()
         Customer(user=user).save()
-        return redirect('http://localhost:3000/login')
+        return redirect(f'{env("ClIENT_URL")}/login')
     else:
         return Response('register')
 

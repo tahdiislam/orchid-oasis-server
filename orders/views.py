@@ -58,9 +58,9 @@ class OrderCreateAPIView(APIView):
                 'total_amount': order.total_price,
                 'currency': "BDT",
                 'tran_id': transaction_id,
-                'success_url': f"http://127.0.0.1:8000/order/success/{order.id}",
-                'fail_url': f"http://127.0.0.1:8000/order/fail/{order.id}",
-                'cancel_url': f"http://127.0.0.1:8000/order/fail/{order.id}",
+                'success_url': f"{env('BACKEND_URL')}/order/success/{order.id}",
+                'fail_url': f"{env('BACKEND_URL')}/order/fail/{order.id}",
+                'cancel_url': f"{env('BACKEND_URL')}/order/fail/{order.id}",
                 'emi_option': 0,
                 'cus_name': full_name,
                 'cus_email': order.customer.user.email,
@@ -100,7 +100,7 @@ class OrderConfirmationAPIView(APIView):
         email = EmailMultiAlternatives(email_subject, '', to=[order.customer.user.email])
         email.attach_alternative(email_body, 'text/html')
         email.send()
-        return HttpResponseRedirect('http://127.0.0.1:3000/profile')
+        return HttpResponseRedirect(f'{env('ClIENT_URL')}/order/{order_id}')
 
 class OrderCancelAPIView(APIView):
     def post(self, request, order_id):
@@ -110,7 +110,7 @@ class OrderCancelAPIView(APIView):
             return Response({'error': 'Order not found or invalid order id'}, status=status.HTTP_404_NOT_FOUND)
         order.status = 'Cancelled'
         order.save()
-        return HttpResponseRedirect('http://127.0.0.1:3000/profile')
+        return HttpResponseRedirect(f'{env('ClIENT_URL')}/order/{order_id}')
     
 class ChangeOrderStatusAPIView(APIView):
     authentication_classes = [TokenAuthentication]
