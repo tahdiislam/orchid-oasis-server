@@ -61,7 +61,7 @@ def activate(request, uid64, token):
         user.is_active = True
         user.save()
         Customer(user=user).save()
-        return redirect(f"{env("ClIENT_URL")}/login")
+        return redirect(env("ClIENT_URL")+"/login")
     else:
         return Response('register')
 
