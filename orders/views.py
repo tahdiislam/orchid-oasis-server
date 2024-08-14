@@ -96,7 +96,7 @@ class OrderConfirmationAPIView(APIView):
         flower.save(update_fields=['available'])
         full_name = f'{order.customer.user.first_name} {order.customer.user.last_name}'
         email_subject = f'Your Order Confirmation - Orchid Oasis (#[{order.id}])'
-        email_body = render_to_string('orders/order_confirmation.html', {'customer_name': full_name, 'order': order})
+        email_body = render_to_string('orders/order_confirmation.html', {'customer_name': full_name, 'order': order, 'client_url': env('ClIENT_URL')})
         email = EmailMultiAlternatives(email_subject, '', to=[order.customer.user.email])
         email.attach_alternative(email_body, 'text/html')
         email.send()
