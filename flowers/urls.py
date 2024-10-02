@@ -8,4 +8,5 @@ router.register('list', views.FlowerViewSet)
 
 urlpatterns = [
     path('', include(router.urls), name='flowers'),
+    path('create/', views.FlowerCreateView.as_view(), name='create'),
 ]

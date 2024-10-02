@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from .serializers import FlowerSerializer
 from .models import Flower
-from rest_framework import viewsets, pagination
+from rest_framework import viewsets, pagination, generics
 
 # Create your views here.
 class FlowerViewSet(viewsets.ReadOnlyModelViewSet):
@@ -21,3 +21,7 @@ class FlowerViewSet(viewsets.ReadOnlyModelViewSet):
             except ValueError:
                 pass
         return queryset
+
+class FlowerCreateView(generics.CreateAPIView):
+    queryset = Flower.objects.all()
+    serializer_class = FlowerSerializer

@@ -6,3 +6,8 @@ class FlowerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Flower
         fields = '__all__'
+
+class FlowerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Flower
+        fields = ['id', 'category', 'title', 'description', 'image_url', 'price', 'available']
