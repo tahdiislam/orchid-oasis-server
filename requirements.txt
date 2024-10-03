@@ -3,7 +3,7 @@ certifi
 charset-normalizer
 crispy-bootstrap5
 Django
-django-cors-headers
+django-cors-headers 
 django-crispy-forms
 django-environ
 django-filter
@@ -12,17 +12,8 @@ djangorestframework
 humanize
 idna
 Markdown
-MouseInfo
 pillow
-psycopg2
 psycopg2-binary
-PyAutoGUI
-PyGetWindow
-PyMsgBox
-pyperclip
-PyRect
-PyScreeze
-pytweening
 requests
 sqlparse
 sslcommerz-lib
