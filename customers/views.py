@@ -80,6 +80,8 @@ class UserLoginAPIView(APIView):
                     return Response({'token': token.key, 'user_id': user.pk, 'admin': True}, status=200)
                 else:
                     return Response({'token': token.key, 'user_id': user.pk}, status=200)
+            else:
+                return Response({'error': 'Invalid credentials'}, status=400)
 
         return Response({'error': 'Invalid credentials'}, status=400)
 
